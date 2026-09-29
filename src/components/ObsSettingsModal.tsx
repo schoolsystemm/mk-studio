@@ -59,6 +59,19 @@ export const ObsSettingsModal: React.FC<ObsSettingsModalProps> = ({ isOpen, onCl
       return '';
     }
   });
+  const [bridgeKey] = useState<string>(() => {
+    const gen = () => 'mk-' + Array.from(crypto.getRandomValues(new Uint8Array(12))).map((b) => b.toString(36).padStart(2, '0')).join('').slice(0, 20);
+    try {
+      let k = localStorage.getItem('mk_vision_bridge_key');
+      if (!k || k.length < 12) {
+        k = gen();
+        localStorage.setItem('mk_vision_bridge_key', k);
+      }
+      return k;
+    } catch {
+      return gen();
+    }
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [localConnecting, setLocalConnecting] = useState(false);
@@ -154,6 +167,29 @@ pause
     URL.revokeObjectURL(url);
     setStatusMsg('Downloaded start-mk-vision.bat! Place it in the project folder and double-click to run locally.');
     setTimeout(() => setStatusMsg(null), 5000);
+  };
+
+  const applyBridgeHost = () => {
+    setHost(`bridge:${bridgeKey}`);
+    setPort(4455);
+    clearObsError();
+  };
+
+  const handleDownloadBridge = () => {
+    applyBridgeHost();
+    const a = document.createElement('a');
+    a.href = `/bridge/launcher.bat?key=${encodeURIComponent(bridgeKey)}`;
+    a.download = 'MK-VISION-Bridge.bat';
+    a.click();
+    setStatusMsg('Downloaded MK-VISION-Bridge.bat. Double-click it on the OBS PC, keep the window open, then press Connect.');
+    setTimeout(() => setStatusMsg(null), 8000);
+  };
+
+  const handleCopyBridgeCmd = () => {
+    navigator.clipboard.writeText(`curl -fsSL ${window.location.origin}/bridge/launcher.sh?key=${bridgeKey} | bash`);
+    applyBridgeHost();
+    setStatusMsg('Copied Mac/Linux command. Paste it in Terminal on the OBS computer.');
+    setTimeout(() => setStatusMsg(null), 6000);
   };
 
   const handleCopyTunnelCmd = () => {
@@ -344,38 +380,17 @@ pause
 
                     <button
                       type="button"
-                      onClick={handleDownloadLauncher}
+                      onClick={handleDownloadBridge}
                       className="flex items-center justify-center gap-2 p-2.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-slate-950 font-mono text-xs font-bold transition-all shadow-md text-left"
                     >
                       <Download className="w-4 h-4 shrink-0" />
                       <div>
-                        <div>WINDOWS 1-CLICK LAUNCHER</div>
-                        <div className="text-[10px] font-normal opacity-85">Run locally on PC with 0ms lag</div>
+                        <div>DOWNLOAD MK BRIDGE</div>
+                        <div className="text-[10px] font-normal opacity-85">One click, works from any network</div>
                       </div>
                     </button>
                   </div>
 
-                  <div className="pt-2 text-slate-300 bg-black/50 p-2.5 rounded border border-white/5 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-amber-300 block uppercase font-mono text-[10px]">
-                        OR USE FREE TUNNEL (1 SINGLE POWERSHELL COMMAND):
-                      </span>
-                      <button
-                        type="button"
-                        onClick={handleCopyTunnelCmd}
-                        className="flex items-center gap-1 text-[10px] font-mono text-amber-400 hover:text-amber-300 underline"
-                      >
-                        <Copy className="w-3 h-3" />
-                        <span>Copy Command</span>
-                      </button>
-                    </div>
-                    <code className="block p-1.5 rounded bg-black/70 font-mono text-[11px] text-emerald-400 select-all overflow-x-auto">
-                      ssh -p 443 -R0:localhost:4455 tcp@free.pinggy.io
-                    </code>
-                    <p className="text-[10px] text-slate-400">
-                      Run this in Windows PowerShell. It will give you a free address (e.g. <span className="text-amber-300">tcp://free.pinggy.io:XXXXX</span>). Paste that into OBS Host and Port above!
-                    </p>
-                  </div>
                 </div>
               </div>
             )}
@@ -414,6 +429,39 @@ pause
                 ) : (
                   <span className="text-amber-300 font-medium">OBS Studio Mode is REQUIRED. MK VISION will automatically request Studio Mode upon connection.</span>
                 )}
+              </div>
+            </div>
+
+            {/* MK Bridge panel */}
+            <div className="p-3.5 rounded-lg bg-amber-950/20 border border-amber-600/30 space-y-2.5">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-xs font-bold text-amber-300 font-mono">CONNECT OBS FROM ANY NETWORK (MK BRIDGE)</div>
+                  <div className="text-[11px] text-slate-300 leading-relaxed">
+                    On the computer running OBS: download, double-click, keep the window open. Then press Connect. No IP, port forwarding or router setup.
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleDownloadBridge}
+                  className="px-3 py-1.5 rounded bg-amber-600 hover:bg-amber-500 text-slate-950 font-mono text-xs font-bold shrink-0 transition-colors flex items-center gap-1.5"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  WINDOWS
+                </button>
+              </div>
+              <div className="flex items-center justify-between gap-2 text-[10px] font-mono text-slate-400">
+                <span>
+                  Your bridge ID: <span className="text-amber-300 select-all">{bridgeKey}</span> (keep private)
+                </span>
+                <span className="flex items-center gap-3 shrink-0">
+                  <button type="button" onClick={handleCopyBridgeCmd} className="underline hover:text-amber-300">
+                    Mac / Linux command
+                  </button>
+                  <button type="button" onClick={applyBridgeHost} className="underline hover:text-amber-300">
+                    Use bridge
+                  </button>
+                </span>
               </div>
             </div>
 
