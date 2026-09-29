@@ -5,6 +5,7 @@
  */
 
 import { OBSWebSocket } from 'obs-websocket-js';
+import { isBridgeHost, bridgeKeyFromHost, isBridgeOnline, relayUrl } from './obsBridge.js';
 import { CameraSourceInfo } from '../src/types/switcher.js';
 
 export interface ObsCallbacks {
@@ -59,6 +60,28 @@ export class ObsManager {
 
       this.obs = new OBSWebSocket();
       this.setupEventListeners();
+
+      if (isBridgeHost(host)) {
+        const key = bridgeKeyFromHost(host);
+        if (!isBridgeOnline(key)) {
+          throw new Error(`Bridge "${key}" is offline. On the OBS PC run: node mk-obs-bridge.mjs <APP_URL> ${key}`);
+        }
+        const relay = relayUrl(key, Number(process.env.PORT) || 3000);
+        console.log(`[MK VISION OBS] Connecting via bridge ${key.slice(0, 3)}***...`);
+        await Promise.race([
+          this.obs.connect(relay, password || undefined, {
+            eventSubscriptions: 0x00000001 | 0x00000004 | 0x00000008 | 0x00000040 | 0x00010000,
+          }),
+          new Promise<never>((_, rej) => setTimeout(() => rej(new Error('Bridge connection timed out after 8000ms.')), 8000)),
+        ]);
+        this.isConnected = true;
+        this.reconnectAttempts = 0;
+        this.shouldAutoReconnect = true;
+        this.callbacks.onConnectionChange(true);
+        await this.enforceStudioMode();
+        await this.reconcileState();
+        return { success: true };
+      }
 
       let cleanHost = host.trim().replace(/^(tcp:\/\/|ws:\/\/|wss:\/\/|http:\/\/|https:\/\/)/i, '');
       // If user pasted host:port into the host field (e.g. "free.pinggy.io:41234")
