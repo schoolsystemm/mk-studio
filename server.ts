@@ -12,6 +12,7 @@ import dotenv from 'dotenv';
 import { storage, hashPassword } from './server/storage.js';
 import { SwitcherEngine } from './server/switcherEngine.js';
 import { testObsConnection } from './server/obsTester.js';
+import { handleBridgeUpgrade } from './server/obsBridge.js';
 
 dotenv.config();
 
@@ -22,7 +23,16 @@ const app = express();
 app.use(express.json());
 
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server, path: '/ws' });
+const wss = new WebSocketServer({ noServer: true });
+server.on('upgrade', (req, socket, head) => {
+  if (handleBridgeUpgrade(req, socket, head)) return;
+  const pathname = new URL(req.url || '/', 'http://localhost').pathname;
+  if (pathname === '/ws') {
+    wss.handleUpgrade(req, socket, head, (ws) => wss.emit('connection', ws, req));
+  } else if (!pathname.startsWith('/__vite') && pathname !== '/') {
+    socket.destroy();
+  }
+});
 const switcherEngine = new SwitcherEngine();
 
 // --- REST API ENDPOINTS ---
