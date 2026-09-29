@@ -1,6 +1,7 @@
 import dns from 'dns';
 import net from 'net';
 import OBSWebSocket from 'obs-websocket-js';
+import { isBridgeHost, bridgeKeyFromHost, isBridgeOnline } from './obsBridge.js';
 
 export interface ObsTestResult {
   success: boolean;
@@ -28,6 +29,24 @@ export async function testObsConnection(
   password?: string
 ): Promise<ObsTestResult> {
   const startTime = Date.now();
+
+  if (isBridgeHost(rawHost || '')) {
+    const key = bridgeKeyFromHost(rawHost);
+    const online = isBridgeOnline(key);
+    return {
+      success: online,
+      stage: online ? 'connected' : 'tcp',
+      cleanHost: `bridge:${key}`,
+      cleanPort: 0,
+      exactError: online ? undefined : `Bridge "${key}" is not connected to this server.`,
+      diagnosticSummary: online
+        ? `Bridge "${key}" is online. Click Connect to OBS Studio.`
+        : `No bridge agent with key "${key}" has dialed in.`,
+      actionableAdvice: online
+        ? 'Bridge is ready.'
+        : `On the OBS PC run: node mk-obs-bridge.mjs <APP_URL> ${key}`,
+    };
+  }
 
   let cleanHost = (rawHost || '').trim().replace(/^(tcp:\/\/|ws:\/\/|wss:\/\/|http:\/\/|https:\/\/)/i, '');
   let cleanPort = Number(rawPort) || 4455;
