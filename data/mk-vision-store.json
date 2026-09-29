@@ -1,0 +1,261 @@
+{
+  "users": {
+    "usr-melton-01": {
+      "id": "usr-melton-01",
+      "email": "konchellamelton@gmail.com",
+      "name": "Melton Konchella",
+      "createdAt": "2026-09-29T21:17:01.276Z",
+      "passwordHash": "b5de0266927cd512bd33841736ed862f92c1ff273b828573a2676004bbc3da0010c535a832b4473d783416c1d1c5fa95c4c275a6cd2c80defbac961439c329d8",
+      "salt": "ab324ffc5e76652872d0333751ace4c5"
+    }
+  },
+  "devices": {
+    "dev-7a9cda1c": {
+      "id": "dev-7a9cda1c",
+      "userId": "usr-melton-01",
+      "name": "Director iPhone",
+      "type": "ios",
+      "registeredAt": "2026-09-29T21:17:07.963Z",
+      "lastActive": "2026-09-29T21:17:07.963Z",
+      "isOnline": false,
+      "isRevoked": true,
+      "currentSessionId": null,
+      "userAgent": "curl/7.88.1"
+    },
+    "dev-efa8f298": {
+      "id": "dev-efa8f298",
+      "userId": "usr-melton-01",
+      "name": "Windows Workstation",
+      "type": "windows",
+      "registeredAt": "2026-09-29T21:17:57.304Z",
+      "lastActive": "2026-09-29T22:07:58.831Z",
+      "isOnline": true,
+      "isRevoked": false,
+      "currentSessionId": "session-sunday-service",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    }
+  },
+  "sessions": {
+    "session-sunday-service": {
+      "sessionId": "session-sunday-service",
+      "sessionName": "Sunday Service Live",
+      "ownerId": "usr-melton-01",
+      "programSceneId": "cam6",
+      "previewSceneId": "cam8",
+      "transitionType": "Cut",
+      "transitionDuration": 1000,
+      "transitionProgress": 0,
+      "isTransitioning": false,
+      "dskActive": false,
+      "dskSourceName": "Lower Third Graphics",
+      "audioFollowVideo": false,
+      "audioChannels": [
+        {
+          "id": "cam1",
+          "name": "CAM 1",
+          "db": -6,
+          "volumeMultiplier": 0.75,
+          "isMuted": true,
+          "peak": -60,
+          "isClipping": false,
+          "obsSourceName": "Cam 1 Audio"
+        },
+        {
+          "id": "cam2",
+          "name": "CAM 2",
+          "db": -4,
+          "volumeMultiplier": 0.8,
+          "isMuted": true,
+          "peak": -60,
+          "isClipping": false,
+          "obsSourceName": "Cam 2 Audio"
+        },
+        {
+          "id": "cam3",
+          "name": "CAM 3",
+          "db": -10,
+          "volumeMultiplier": 0.6,
+          "isMuted": true,
+          "peak": -60,
+          "isClipping": false,
+          "obsSourceName": "Cam 3 Audio"
+        },
+        {
+          "id": "cam4",
+          "name": "CAM 4",
+          "db": -8,
+          "volumeMultiplier": 0.7,
+          "isMuted": true,
+          "peak": -60,
+          "isClipping": false,
+          "obsSourceName": "Cam 4 Audio"
+        },
+        {
+          "id": "cam5",
+          "name": "CAM 5",
+          "db": -14,
+          "volumeMultiplier": 0.5,
+          "isMuted": true,
+          "peak": -60,
+          "isClipping": false,
+          "obsSourceName": "Cam 5 Audio"
+        },
+        {
+          "id": "cam6",
+          "name": "CAM 6",
+          "db": -12,
+          "volumeMultiplier": 0.55,
+          "isMuted": true,
+          "peak": -60,
+          "isClipping": false,
+          "obsSourceName": "Cam 6 Audio"
+        },
+        {
+          "id": "cam7",
+          "name": "CAM 7",
+          "db": -10,
+          "volumeMultiplier": 0.6,
+          "isMuted": true,
+          "peak": -60,
+          "isClipping": false,
+          "obsSourceName": "Cam 7 Audio"
+        },
+        {
+          "id": "cam8",
+          "name": "CAM 8",
+          "db": -6,
+          "volumeMultiplier": 0.75,
+          "isMuted": true,
+          "peak": -60,
+          "isClipping": false,
+          "obsSourceName": "Cam 8 Audio"
+        },
+        {
+          "id": "mic1",
+          "name": "MIC 1 (Host)",
+          "db": -2,
+          "volumeMultiplier": 0.88,
+          "isMuted": true,
+          "peak": -60,
+          "isClipping": false,
+          "obsSourceName": "Host Wireless Mic"
+        },
+        {
+          "id": "music",
+          "name": "MUSIC (BGM)",
+          "db": -12,
+          "volumeMultiplier": 0.52,
+          "isMuted": true,
+          "peak": -60,
+          "isClipping": false,
+          "obsSourceName": "BGM Player"
+        }
+      ],
+      "masterAudio": {
+        "db": -4,
+        "volumeMultiplier": 0.82,
+        "isMuted": true,
+        "peak": -60,
+        "isClipping": false
+      },
+      "streamState": {
+        "isStreaming": false,
+        "durationSec": 0,
+        "kbitsPerSec": 6000,
+        "fps": 60
+      },
+      "recordingState": {
+        "isRecording": false,
+        "isPaused": false,
+        "durationSec": 0
+      },
+      "cameraSources": [
+        {
+          "id": "cam1",
+          "label": "CAM 1",
+          "obsSceneName": "Camera 1 - Wide",
+          "description": "Main Stage Wide",
+          "color": "#3b82f6"
+        },
+        {
+          "id": "cam2",
+          "label": "CAM 2",
+          "obsSceneName": "Camera 2 - Pulpit",
+          "description": "Speaker Close-Up",
+          "color": "#10b981"
+        },
+        {
+          "id": "cam3",
+          "label": "CAM 3",
+          "obsSceneName": "Camera 3 - Altar",
+          "description": "Altar Center",
+          "color": "#f59e0b"
+        },
+        {
+          "id": "cam4",
+          "label": "CAM 4",
+          "obsSceneName": "Camera 4 - Choir",
+          "description": "Choir & Musicians",
+          "color": "#8b5cf6"
+        },
+        {
+          "id": "cam5",
+          "label": "CAM 5",
+          "obsSceneName": "Camera 5 - Crowd",
+          "description": "Congregation Wide",
+          "color": "#ec4899"
+        },
+        {
+          "id": "cam6",
+          "label": "CAM 6",
+          "obsSceneName": "Camera 6 - Balcony",
+          "description": "Overhead Angle",
+          "color": "#06b6d4"
+        },
+        {
+          "id": "cam7",
+          "label": "CAM 7",
+          "obsSceneName": "Camera 7 - Slides",
+          "description": "Presentation & Lyrics",
+          "color": "#14b8a6"
+        },
+        {
+          "id": "cam8",
+          "label": "CAM 8",
+          "obsSceneName": "Camera 8 - Graphics",
+          "description": "Media Video Roll",
+          "color": "#6366f1"
+        }
+      ],
+      "obsConnected": false,
+      "obsHost": "102.205.170.35",
+      "obsPort": 4455,
+      "studioModeActive": true,
+      "version": 570,
+      "updatedAt": "2026-09-29T22:14:30.000Z",
+      "obsIsConnecting": false,
+      "obsConnectionError": undefined
+    }
+  },
+  "sessionMembers": {
+    "session-sunday-service": [
+      {
+        "deviceId": "dev-efa8f298",
+        "userId": "usr-melton-01",
+        "userName": "Melton Konchella",
+        "deviceName": "Windows Workstation",
+        "deviceType": "windows",
+        "role": "owner",
+        "joinedAt": "2026-09-29T22:07:58.831Z",
+        "isOnline": true
+      }
+    ]
+  },
+  "inviteTokens": {
+    "inv-5f203e52ea3bb422": {
+      "sessionId": "session-sunday-service",
+      "role": "operator",
+      "expiresAt": 1790720231988
+    }
+  }
+}

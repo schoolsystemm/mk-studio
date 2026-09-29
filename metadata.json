@@ -1,0 +1,8 @@
+{
+  "name": "MK VISION",
+  "description": "Professional Digital Production Switcher and Multi-Device Control Surface with OBS Integration by Melton Konchella",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
