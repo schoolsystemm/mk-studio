@@ -206,6 +206,81 @@ app.post('/api/sessions/join', (req, res) => {
   }
 });
 
+// --- MK BRIDGE: one-click launcher downloads ---
+const BRIDGE_KEY_RE = /^[A-Za-z0-9_-]{6,64}$/;
+
+function publicBaseUrl(req: express.Request): string {
+  const proto = (req.headers['x-forwarded-proto'] as string || req.protocol || 'https').split(',')[0].trim();
+  const host = (req.headers['x-forwarded-host'] as string || req.headers.host || '').split(',')[0].trim();
+  return `${proto}://${host}`;
+}
+
+app.get('/bridge/mk-obs-bridge.mjs', (_req, res) => {
+  res.type('application/javascript');
+  res.sendFile(path.resolve(process.cwd(), 'mk-obs-bridge.mjs'));
+});
+
+app.get('/bridge/launcher.bat', (req, res) => {
+  const key = String(req.query.key || '');
+  if (!BRIDGE_KEY_RE.test(key)) return res.status(400).send('Invalid key');
+  const app_url = publicBaseUrl(req);
+  const bat = [
+    '@echo off',
+    'setlocal',
+    'title MK VISION Bridge',
+    'cd /d "%~dp0"',
+    `set "APP=${app_url}"`,
+    `set "KEY=${key}"`,
+    'echo ==========================================',
+    'echo   MK VISION Bridge  (keep this window open)',
+    'echo ==========================================',
+    'set "NV=0"',
+    'where node >nul 2>nul && for /f "tokens=1 delims=v." %%a in (\'node -v\') do set "NV=%%a"',
+    'if %NV% GEQ 22 goto have_node',
+    'echo Installing Node.js (one time, approve the prompt)...',
+    'winget install -e --id OpenJS.NodeJS.LTS --silent --accept-package-agreements --accept-source-agreements',
+    'set "PATH=%PATH%;%ProgramFiles%\\nodejs"',
+    ':have_node',
+    'where node >nul 2>nul',
+    'if errorlevel 1 (',
+    '  echo Could not find Node.js. Install it from https://nodejs.org then run this file again.',
+    '  pause',
+    '  exit /b 1',
+    ')',
+    ':run',
+    'curl.exe -fsSL "%APP%/bridge/mk-obs-bridge.mjs" -o "%~dp0mk-obs-bridge.mjs"',
+    'if errorlevel 1 echo Could not download bridge from %APP%',
+    'node "%~dp0mk-obs-bridge.mjs" "%APP%" "%KEY%"',
+    'echo Bridge stopped. Restarting in 5 seconds...',
+    'timeout /t 5 >nul',
+    'goto run',
+    '',
+  ].join('\r\n');
+  res.setHeader('Content-Type', 'application/octet-stream');
+  res.setHeader('Content-Disposition', 'attachment; filename="MK-VISION-Bridge.bat"');
+  return res.send(bat);
+});
+
+app.get('/bridge/launcher.sh', (req, res) => {
+  const key = String(req.query.key || '');
+  if (!BRIDGE_KEY_RE.test(key)) return res.status(400).send('Invalid key');
+  const app_url = publicBaseUrl(req);
+  const sh = [
+    '#!/bin/bash',
+    `APP="${app_url}"`,
+    `KEY="${key}"`,
+    'DIR="$HOME/mk-vision-bridge"; mkdir -p "$DIR"; cd "$DIR" || exit 1',
+    'if ! command -v node >/dev/null 2>&1; then echo "Install Node.js 22+ from https://nodejs.org first."; exit 1; fi',
+    'while true; do',
+    '  curl -fsSL "$APP/bridge/mk-obs-bridge.mjs" -o mk-obs-bridge.mjs',
+    '  node mk-obs-bridge.mjs "$APP" "$KEY"',
+    '  echo "Bridge stopped. Restarting in 5s..."; sleep 5',
+    'done',
+    '',
+  ].join('\n');
+  res.type('text/plain').send(sh);
+});
+
 // OBS Connection Reachability Diagnostic Probe
 app.post('/api/obs/test-connection', async (req, res) => {
   try {
